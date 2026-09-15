@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dale Carnegie's Golden Book</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border-top: 8px solid #d4af37; /* Gold Accent Bar */
+        }
+        .header {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .category {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .thought {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .btn:hover {
+            background-color: #d4af37;
+            transform: translateY(-2px);
+        }
+        .footer {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="card">
+    <div class="header">Dale Carnegie's Golden Book</div>
+    <div class="category" id="category-display">Loading...</div>
+    <div class="thought" id="thought-display">"..."</div>
+    <button class="btn" onclick="getRandomThought()">Receive Next Thought</button>
+    <div class="footer">In loving memory of Dad</div>
+</div>
+ 
+<script>
+// Centralized Data Object (all lowercase with underscores to prevent mismatch)
+const golden_book = {
+    "Become a Friendlier Person": [
+        "1. Don't criticize, condemn or complain.",
+        "2. Give honest, sincere appreciation.",
+        "3. Arouse in the other person an eager want.",
+        "4. Become genuinely interested in other people.",
+        "5. Smile.",
+        "6. Remember that a person’s name is to him or her the sweetest and most important sound in any language.",
+        "7. Be a good listener. Encourage others to talk about themselves.",
+        "8. Talk in terms of the other person’s interests.",
+        "9. Make the other person feel important - and do it sincerely."
+    ],
+    "Win People to Your Way of Thinking": [
+        "1. The only way to get the best of an argument is to avoid it.",
+        "2. Show respect for the other person’s opinions. Never tell a person he or she is wrong.",
+        "3. If you are wrong, admit it quickly and emphatically.",
+        "4. Begin in a friendly way.",
+        "5. Get the other person saying 'yes, yes' immediately.",
+        "6. Let the other person do a great deal of the talking.",
+        "7. Let the other person feel that the idea is his or hers.",
+        "8. Try honestly to see things from the other person’s point of view.",
+        "9. Be sympathetic with the other person’s ideas and desires.",
+        "10. Appeal to the nobler motives.",
+        "11. Dramatize your ideas.",
+        "12. Throw down a challenge."
+    ],
+    "Be a Leader": [
+        "1. Begin with praise and honest appreciation.",
+        "2. Call attention to people’s mistakes indirectly.",
+        "3. Talk about your own mistakes before criticizing the other person.",
+        "4. Ask questions instead of giving direct orders.",
+        "5. Let the other person save face.",
+        "6. Praise the slightest improvement and praise every improvement. Be 'hearty in your approbation and lavish in your praise.'",
+        "7. Give the other person a fine reputation to live up to.",
+        "8. Use encouragement. Make the fault seem easy to correct.",
+        "9. Make the other person happy about doing the thing you suggest."
+    ],
+    "Fundamental Principles for Overcoming Worry": [
+        "1. Live in 'day-tight compartments.'",
+        "2. How to face trouble: Ask yourself, 'What is the worst that can possibly happen?'; Prepare to accept the worst; Try to improve on the worst.",
+        "3. Remind yourself of the exorbitant price you can pay for worry in terms of your health."
+    ],
+    "Basic Techniques in Analyzing Worry": [
+        "1. Get all the facts.",
+        "2. Weigh all the facts - then come to a decision.",
+        "3. Once a decision is reached, ACT!",
+        "4. Write out and answer the following questions: What is the problem? What are the causes of the problem? What are the possible solutions? What is the best solution?"
+    ],
+    "Break the Worry Habit Before It Breaks You": [
+        "1. Keep busy.",
+        "2. Don’t fuss about trifles.",
+        "3. Use the law of averages to outlaw your worries.",
+        "4. Cooperate with the inevitable.",
+        "5. Decide just how much anxiety a thing may be worth and refuse to give it more.",
+        "6. Don’t worry about the past."
+    ],
+    "Cultivate a Mental Attitude That Will Bring You Peace and Happiness": [
+        "1. Fill your mind with thoughts of peace, courage, health and hope.",
+        "2. Never try to get even with your enemies.",
+        "3. Expect ingratitude.",
+        "4. Count your blessings - not your troubles.",
+        "5. Do not imitate others.",
+        "6. Try to profit from your losses.",
+        "7. Create happiness for others."
+    ],
+    "The Perfect Way to Conquer Worry": [
+        "1. Pray."
+    ],
+    "Don’t Worry about Criticism": [
+        "1. Remember that unjust criticism is often a disguised compliment.",
+        "2. Do the very best you can.",
+        "3. Analyze your own mistakes and criticize yourself."
+    ],
+    "Prevent Fatigue and Worry and Keep Your Energy and Spirits High": [
+        "1. Rest before you get tired.",
+        "2. Learn to relax at your work.",
+        "3. If you run a household, protect your health and appearance by relaxing at home.",
+        "4. Apply these four good working habits: Clear your desk of all papers except those relating to the immediate problem; Do things in order of importance; When you face a problem, solve it then and there if you have the facts; Learn to organize, deputize and supervise.",
+        "5. Put enthusiasm into your work.",
+        "6. Don’t worry about insomnia."
+    ]
+};
+ 
+function getRandomThought() {
+    try {
+        const categories = Object.keys(golden_book);
+        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+        const thoughts = golden_book[randomCategory];
+        const randomThought = thoughts[Math.floor(Math.random() * thoughts.length)];
+        
+        document.getElementById('category-display').textContent = randomCategory;
+        document.getElementById('thought-display').textContent = `"${randomThought}"`;
+    } catch (error) {
+        console.error("Error fetching thought: ", error);
+        document.getElementById('thought-display').textContent = "An error occurred. Please refresh.";
+    }
+}
+ 
+// Automatically fetch a thought when the page loads
+window.onload = getRandomThought;
+</script>
+ 
+</body>
+</html>
+ 
